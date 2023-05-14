@@ -5,16 +5,22 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public float moveSpeed = 5f;
-   // public Weapon equippedWeapon;
+    public Weapon defaultWeapon;
+    public Weapon equippedWeapon;
+    public Transform weaponSlot;
 
     private Camera mainCamera;
     private Vector2 mousePos;
 
     private Vector2 movement;
 
+
+
     void Start()
     {
         mainCamera = Camera.main;
+
+        EquipWeapon(defaultWeapon);
     }
 
     void Update()
@@ -40,8 +46,7 @@ public class PlayerController : MonoBehaviour
         // Check for fire input
         if (Input.GetButtonDown("Fire1"))
         {
-            // equippedWeapon.Fire();
-            Debug.Log("Fire");
+            equippedWeapon.Attack();
         }
     }
 
@@ -49,5 +54,16 @@ public class PlayerController : MonoBehaviour
     {
         // Move player based on movement input
         transform.Translate(movement * moveSpeed * Time.fixedDeltaTime, Space.World);
+    }
+
+    public void EquipWeapon(Weapon newWeapon)
+    {
+        equippedWeapon = Instantiate(newWeapon, weaponSlot.position, weaponSlot.rotation);
+        equippedWeapon.transform.parent = weaponSlot.transform;
+    }
+
+    public void UnequipWeapon()
+    {
+        Destroy(equippedWeapon);
     }
 }
