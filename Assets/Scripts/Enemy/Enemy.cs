@@ -11,12 +11,15 @@ public class Enemy : MonoBehaviour
     public float knockbackForce;
     public Rigidbody2D rb;
     public Collider2D enemyCollider;
+    public int pointValue;
+    public GameManager gm;
 
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         enemyCollider = GetComponent<Collider2D>();
+        gm = GameObject.FindObjectOfType<GameManager>();
     }
 
     // Update is called once per frame
@@ -66,6 +69,7 @@ public class Enemy : MonoBehaviour
 
     public void Die()
     {
+        gm.AddScore(pointValue);
         Destroy(gameObject);
     }
     
