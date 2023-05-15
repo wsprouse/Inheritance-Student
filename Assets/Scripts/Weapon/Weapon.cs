@@ -2,59 +2,77 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// This is the Weapon class, which all weapons will inherit from.
 public class Weapon : MonoBehaviour
 {
-    public Rigidbody2D rb;
-    public SpriteRenderer sr;
-    public BoxCollider2D boxCollider;
+    // These variables will be used by all subclasses of Weapon.
+    public Rigidbody2D rb; // The rigidbody component of the weapon.
+    public SpriteRenderer sr; // The sprite renderer component of the weapon.
+    public BoxCollider2D boxCollider; // The box collider component of the weapon.
 
-    public bool canAttack = true;
-    public float attackDuration;
-    public float attackRate;
-    public float damage;
+    // These variables can be adjusted for each subclass of Weapon.
+    public bool canAttack = true; // Whether or not the weapon can currently attack.
+    public float attackDuration; // The duration of the weapon's attack.
+    public float attackRate; // The rate at which the weapon can attack.
+    public float damage; // The amount of damage the weapon can deal.
 
 
-    // Start is called before the first frame update
+    // Start is called before the first frame update.
     void Start()
     {
+        // Get the rigidbody, sprite renderer, and box collider components of the weapon.
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponentInChildren<SpriteRenderer>();
         boxCollider = GetComponent<BoxCollider2D>();
 
-        boxCollider.enabled = false;
-        sr.enabled = false;
+        // Disable the weapon to start with.
+        DisableWeapon();
     }
 
+    // This is a virtual function that can be overridden by subclasses of Weapon.
     public virtual void Attack()
     {
+        // Check if the weapon can currently attack.
         if (canAttack)
         {
-            canAttack = false;
-            sr.enabled = true;
+            // Enable the weapon and the box collider, and set a timer to disable the weapon.
+            EnableWeapon();
             boxCollider.enabled = true;
             Invoke("DisableWeapon", attackDuration);
+
+            // Set a timer to reset the weapon's attack ability.
             Invoke("AttackReset", 60f / attackRate);
         }
     }
 
+    // Disable the weapon by hiding the sprite and disabling the box collider.
     public void DisableWeapon()
     {
         sr.enabled = false;
         boxCollider.enabled = false;
     }
 
+    // Enable the weapon by showing the sprite, enabling the box collider, and disabling the attack ability.
+    public void EnableWeapon()
+    {
+        canAttack = false;
+        sr.enabled = true;
+        boxCollider.enabled = true;
+    }
+
+    // Reset the weapon's attack ability.
     public void AttackReset()
     {
         canAttack = true;
     }
 
-
+    // This function is called when the weapon's box collider collides with another collider.
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log("Trigger!");
-        if(collision.CompareTag("Enemy"))
+        // Check if the collider belongs to an enemy.
+        if (collision.CompareTag("Enemy"))
         {
-            Debug.Log("Enemy Hit!");
+            // If it does, deal damage to the enemy.
             collision.GetComponent<Enemy>().TakeDamage(damage);
         }
     }
