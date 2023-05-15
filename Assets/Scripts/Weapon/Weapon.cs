@@ -25,7 +25,7 @@ public class Weapon : MonoBehaviour
         sr.enabled = false;
     }
 
-    public void Attack()
+    public virtual void Attack()
     {
         if (canAttack)
         {
